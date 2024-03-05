@@ -1,12 +1,7 @@
 package com.mercadoLivro.mercadolivro.service
 
-import com.mercadoLivro.mercadolivro.controler.request.PostCustomerRequest
-import com.mercadoLivro.mercadolivro.controler.request.PutCustomerRequest
 import com.mercadoLivro.mercadolivro.model.CustomerModel
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestParam
 
 @Service
 class CustomerService {
@@ -19,21 +14,23 @@ class CustomerService {
         return customers
     }
 
-    fun createCustomer(customer: PostCustomerRequest){
+    fun createCustomer(customer: CustomerModel){
         val id = if ( customers.isEmpty()){
             1
         } else{
-            customers.last().id.toInt() + 1
+            customers.last().id?.toInt()?.plus(1)
         }.toString()
-        customers.add(CustomerModel(id, customer.name, customer.email))
+        customers.add(customer)
+        customer.id = id
+
     }
 
     fun getCustomer(id: String): CustomerModel {
         return customers.filter { it.id == id }.first()
     }
 
-    fun update(id: String,  customer: PutCustomerRequest){
-        customers.first { it.id == id }.let {
+    fun update(id: String,  customer: CustomerModel){
+        customers.first { it.id == customer.id }.let {
             it.name = customer.name
             it.email = customer.email
         }
